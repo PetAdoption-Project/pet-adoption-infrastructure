@@ -1,0 +1,21 @@
+services:
+
+  vault:
+    command: vault server -config=/vault/config/vault.hcl
+    volumes:
+      - ./config/vault/vault.hcl:/vault/config/vault.hcl
+      - vault_data:/vault/data
+
+  keycloak:
+    command: start
+    environment:
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME}
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/tls.key
+    volumes:
+      - ./certs:/opt/keycloak/conf:ro
+    ports:
+      - "8443:8443"
+
+volumes:
+  vault_data:

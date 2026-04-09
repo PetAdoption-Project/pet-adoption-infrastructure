@@ -1,0 +1,5 @@
+{
+  "realm-export.json is not committed to the repository": true,
+  "how-to-get-it": "Export from Keycloak Admin UI → Realm settings → Action → Partial export → check 'Export clients' and 'Export groups and roles' → Download",
+  "place-the-file-at": "config/keycloak/realm-export.json"
+}
