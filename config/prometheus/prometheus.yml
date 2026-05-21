@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'spring-services'
+    metrics_path: '/actuator/prometheus'
+    eureka_sd_configs:
+      - server: http://eureka-server:8761/eureka
+    relabel_configs:
+      - source_labels: [ __meta_eureka_app_instance_hostname, __meta_eureka_app_instance_metadata_management_port ]
+        separator: ':'
+        regex: '(.+):(\d+)'
+        target_label: __address__
+        replacement: '$1:$2'
+      - source_labels: [ __meta_eureka_app_name ]
+        target_label: application
