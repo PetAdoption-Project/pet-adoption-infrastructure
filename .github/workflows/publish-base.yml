@@ -1,0 +1,21 @@
+name: Publish base image
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - base/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/_build-base.yml
+    with:
+      push: true
+      platforms: linux/amd64,linux/arm64
+    secrets: inherit
