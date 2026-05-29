@@ -1,7 +1,5 @@
-ARG JAVA_VERSION=21
-FROM eclipse-temurin:${JAVA_VERSION}-jre-alpine
-RUN apk add --no-cache curl \
-    && addgroup -S spring \
+FROM eclipse-temurin:21-jre-alpine@sha256:704db3c40204a44f471191446ddd9cda5d60dab40f0e15c6507b815ed897238b
+RUN addgroup -S spring \
     && adduser -S spring -G spring
 USER spring:spring
 WORKDIR /app

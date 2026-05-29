@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "pinDigests": true,
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile"],
+      "matchDepNames": ["eclipse-temurin"],
+      "automerge": false,
+      "labels": ["dependencies", "docker"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "automerge": false,
+      "labels": ["dependencies", "github-actions"]
+    }
+  ]
+}
