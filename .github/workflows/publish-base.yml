@@ -1,0 +1,43 @@
+name: Publish base image
+
+on:
+  workflow_dispatch:
+    inputs:
+      java_version:
+        description: Java version
+        required: true
+        type: choice
+        options:
+          - "21"
+        default: "21"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: pet-adoption-spring-base
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: base
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: base
+          build-args: JAVA_VERSION=${{ inputs.java_version }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ inputs.java_version }}
+          push: true

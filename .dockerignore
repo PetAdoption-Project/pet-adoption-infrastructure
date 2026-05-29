@@ -1,0 +1,9 @@
+.env
+.env.local
+.env.aws
+.idea/
+.DS_Store
+.git/
+.gitignore
+scripts/
+config/

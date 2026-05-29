@@ -5,4 +5,5 @@
 config/keycloak/realm-export.json
 
 certs/
-.idea
+.idea/
+target/
