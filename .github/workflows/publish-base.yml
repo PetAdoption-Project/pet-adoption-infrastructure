@@ -39,6 +39,7 @@ jobs:
           VERSION=$(grep -oP 'eclipse-temurin:\K\d+' base/Dockerfile | head -1)
           if [ -z "$VERSION" ]; then echo "ERROR: could not extract Java version from Dockerfile" && exit 1; fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
@@ -52,8 +53,8 @@ jobs:
         with:
           context: base
           tags: |
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.java-version.outputs.version }}
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.java-version.outputs.version }}-${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ steps.java-version.outputs.owner }}/${{ env.IMAGE_NAME }}:${{ steps.java-version.outputs.version }}
+            ${{ env.REGISTRY }}/${{ steps.java-version.outputs.owner }}/${{ env.IMAGE_NAME }}:${{ steps.java-version.outputs.version }}-${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           provenance: false
