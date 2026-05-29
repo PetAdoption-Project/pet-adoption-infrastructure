@@ -5,11 +5,12 @@ on:
     paths:
       - base/**
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   validate:
-    permissions:
-      contents: read
-      packages: read
     uses: ./.github/workflows/_build-base.yml
     with:
       push: false
