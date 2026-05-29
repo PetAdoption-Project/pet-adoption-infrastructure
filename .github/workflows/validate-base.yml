@@ -1,0 +1,16 @@
+name: Validate base image
+
+on:
+  pull_request:
+    paths:
+      - base/**
+
+jobs:
+  validate:
+    permissions:
+      contents: read
+      packages: read
+    uses: ./.github/workflows/_build-base.yml
+    with:
+      push: false
+      platforms: linux/amd64

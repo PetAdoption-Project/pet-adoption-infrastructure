@@ -1,60 +1,20 @@
 name: Publish base image
 
 on:
-  pull_request:
-    paths:
-      - base/**
   push:
     branches: [master]
     paths:
       - base/**
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: pet-adoption-spring-base
-
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
       packages: write
-
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          sparse-checkout: base/**
-          sparse-checkout-cone-mode: false
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
-
-      - name: Extract Java version from Dockerfile
-        id: java-version
-        run: |
-          VERSION=$(grep -oP 'eclipse-temurin:\K\d+' base/Dockerfile | head -1)
-          if [ -z "$VERSION" ]; then echo "ERROR: could not extract Java version from Dockerfile" && exit 1; fi
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.1
-        with:
-          context: base
-          tags: |
-            ${{ env.REGISTRY }}/${{ steps.java-version.outputs.owner }}/${{ env.IMAGE_NAME }}:${{ steps.java-version.outputs.version }}
-            ${{ env.REGISTRY }}/${{ steps.java-version.outputs.owner }}/${{ env.IMAGE_NAME }}:${{ steps.java-version.outputs.version }}-${{ github.sha }}
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          provenance: false
+    uses: ./.github/workflows/_build-base.yml
+    with:
+      push: true
+      platforms: linux/amd64,linux/arm64
+    secrets: inherit
